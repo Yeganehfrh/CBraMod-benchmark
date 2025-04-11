@@ -1,0 +1,6 @@
+[submodule "CBraMod"]
+	path = CBraMod
+	url = https://github.com/wjq-learning/CBraMod.git
+[submodule "pretrained_weights"]
+	path = pretrained_weights
+	url = https://huggingface.co/weighting666/CBraMod
