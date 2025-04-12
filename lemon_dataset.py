@@ -71,6 +71,21 @@ class CustomDataset(Dataset):
         self.y = self.eeg.beh_score.values
         self.y = self.y.repeat(self.x.shape[0] / self.n_subjects)
 
+        # TODO test/train split
+        indices = torch.randperm(self.y.shape[0])
+        self.x=self.x[indices]
+        self.y=self.y[indices]
+
+        if self.mode == 'train':
+            self.x = self.x[:int(len(self.x) * 0.8)]
+            self.y = self.y[:int(len(self.y) * 0.8)]
+        elif self.mode == 'val':
+            self.x = self.x[int(len(self.x) * 0.8):int(len(self.x) * 0.9)]
+            self.y = self.y[int(len(self.y) * 0.8):int(len(self.y) * 0.9)]
+        elif self.mode == 'test':
+            self.x = self.x[int(len(self.x) * 0.9):int(len(self.x) * 1.)]
+            self.y = self.y[int(len(self.y) * 0.9):int(len(self.y) * 1.)]
+
     def __len__(self):
         return len((self.y))
 

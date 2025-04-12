@@ -22,7 +22,7 @@ def get_metrics_for_binaryclass(model, data_loader, device="mps"):
         y = y.to(device)
         pred = model(x)
         score_y = torch.sigmoid(pred)
-        pred_y = torch.gt(score_y, 0.5).long()
+        pred_y = torch.argmax(score_y, dim=1)
         truths += y.long().cpu().squeeze().numpy().tolist()
         preds += pred_y.cpu().squeeze().numpy().tolist()
         scores += score_y.cpu().numpy().tolist()
@@ -83,13 +83,10 @@ class Trainer(object):
         self.optimizer_scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
             self.optimizer, T_max=self.params.epochs * self.data_length, eta_min=1e-6
         )
-        print(self.model)
 
     def train_for_binaryclass(self):
-        acc_best = 0
-        roc_auc_best = 0
-        pr_auc_best = 0
-        cm_best = None
+        best_acc = 0
+        best_epoch = 0
         for epoch in range(self.params.epochs):
             self.model.train()
             start_time = timer()
@@ -97,7 +94,7 @@ class Trainer(object):
             for x, y in tqdm(self.data_loader['train'], mininterval=10):
                 self.optimizer.zero_grad()
                 x = x.to(self.device)
-                y = y.to(self.device)
+                y = y.to(self.device).long()
                 pred = self.model(x)
 
                 loss = self.criterion(pred, y)
@@ -123,21 +120,14 @@ class Trainer(object):
                         (timer() - start_time) / 60
                     )
                 )
+                if acc > best_acc:
+                    best_acc = acc
+                    best_epoch = epoch + 1
+                    self.best_model_states = copy.deepcopy(self.model.state_dict())
+
         self.model.load_state_dict(self.best_model_states)
         with torch.no_grad():
             print("***************************Test************************")
-            acc, pr_auc, roc_auc, cm = self.test_eval.get_metrics_for_binaryclass(self.model)
+            acc = get_metrics_for_binaryclass(self.model, self.data_loader['val'], self.device)
             print("***************************Test results************************")
-            print(
-                "Test Evaluation: acc: {:.5f}, pr_auc: {:.5f}, roc_auc: {:.5f}".format(
-                    acc,
-                    pr_auc,
-                    roc_auc,
-                )
-            )
-            print(cm)
-            if not os.path.isdir(self.params.model_dir):
-                os.makedirs(self.params.model_dir)
-            model_path = self.params.model_dir + "/epoch{}_acc_{:.5f}_pr_{:.5f}_roc_{:.5f}.pth".format(best_f1_epoch, acc, pr_auc, roc_auc)
-            torch.save(self.model.state_dict(), model_path)
-            print("model save in " + model_path)
+            print("Test Evaluation: acc: {:.5f}".format(acc))

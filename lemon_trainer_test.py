@@ -2,23 +2,21 @@ import sys
 
 sys.path.append("./CBraMod")  # HACK to make imports in submodules work
 
-from mne import data
 import torch
 from lemon_trainer import Trainer
 from argparse import Namespace
 from lemon_dataset import LoadDataset
 from lemon_model import Model as ModelForLemonGender
-from lemon_trainer import get_metrics_for_binaryclass
 
 params = Namespace(
     data_dir = "data/LEMON_DATA/",
     channels = ['O1', 'O2', 'F1', 'F2', 'C1', 'C2', 'P1', 'P2'],
     segment_size = 512,
-    batch_size = 32,
+    batch_size = 1024,
     bandpass_filter = 0.5,
     n_channels = 8,
     n_segments = 2,
-    device = 'mps',
+    device = 'cpu',
 
     # model
     foundation_dir = "pretrained_weights/pretrained_weights.pth",
@@ -26,7 +24,7 @@ params = Namespace(
 
     # finetune
     label_smoothing = 0.1,
-    frozen = False,
+    frozen = True,
     optimizer = 'AdamW',
     multi_lr = False,
     lr = 5e-4,
