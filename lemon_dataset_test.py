@@ -22,6 +22,7 @@ if __name__ == "__main__":
         channels=params.channels,
         segment_size=params.segment_size,
         mode='train',
+        downstream_task='age',
     )
 
     subject_ids = ds.subject_ids

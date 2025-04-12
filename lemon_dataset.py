@@ -12,6 +12,7 @@ class LEMONDataset(Dataset):
             self,
             data_dir,
             channels=['O1', 'O2', 'F1', 'F2', 'C1', 'C2', 'P1', 'P2'],
+            downstream_task='age',
             bandpass_filter=0.5,
             segment_size: int = 512,
             mode='train',
@@ -26,20 +27,30 @@ class LEMONDataset(Dataset):
         self.subjects = self.eeg.subject.values
 
         # demographics
-        demographics_path = os.path.join(data_dir, 'Demographics.csv')
-        demog = pd.read_csv(demographics_path, index_col="ID")
+        _demographics_path = os.path.join(data_dir, 'Demographics.csv')
+        demog = pd.read_csv(_demographics_path, index_col="ID")
 
-        # behavioral score    
-        beh_score = pd.read_csv('data/LEMON_DATA/UPPS.csv', index_col="ID")
-        beh_score_name = 'UPPS_sens_seek'
-        beh_score[beh_score_name] = (
-            beh_score[beh_score_name].apply(
-                lambda x: 1 if x > 30 else 0))
-
-        # merge behavioral scores into eeg
-        demog = demog.merge(beh_score, left_index=True, right_index=True)
-        beh_score = demog.loc[self.subjects, beh_score_name]
-        self.eeg = self.eeg.assign_coords(beh_score=("subject", beh_score))
+        beh_score = None
+        if downstream_task.lower() == 'upps':
+            # NOTE behavioral score    
+            beh_score = pd.read_csv('data/LEMON_DATA/UPPS.csv', index_col="ID")
+            beh_score_name = 'UPPS_sens_seek'
+            beh_score[beh_score_name] = (
+                beh_score[beh_score_name].apply(lambda x: 1 if x > 30 else 0))
+            # merge behavioral scores into eeg
+            demog = demog.merge(beh_score, left_index=True, right_index=True)
+            beh_score = demog.loc[self.subjects, beh_score_name]
+            self.eeg = self.eeg.assign_coords(beh_score=("subject", beh_score))
+        elif downstream_task.lower() == 'age':
+            # age (young/old)
+            demog['is_old'] = demog['Age'].apply(
+                lambda x:1 if int(x.split('-')[0]) >= 50 else 0)
+            beh_score = demog.loc[self.eeg["subject"].values, "is_old"]
+            self.eeg = self.eeg.assign_coords(beh_score=("subject", beh_score))
+        elif downstream_task.lower() == 'gender':
+            beh_score = demog.loc[self.eeg["subject"].values, "Gender_ 1=female_2=male"]
+            beh_score = beh_score.apply(lambda x: 1 if x == 2 else 0)
+            self.eeg = self.eeg.assign_coords(beh_score=("subject", beh_score))
 
         # downsample FIXME
         n_y0 = (beh_score == 0).sum()

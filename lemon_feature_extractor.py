@@ -12,12 +12,13 @@ from argparse import Namespace
 
 DEFAULT_PARAMS = Namespace(**{
     "foundation_dir": "pretrained_weights/pretrained_weights.pth",
-    "features_file_path": "data/LEMON_DATA/CBraMod_features_gender.pt",
+    "features_file_path": "data/LEMON_DATA/CBraMod_features_<DOWNSTREAM_TASK>.pt",
     "num_of_classes": 2,
     "device": 'cpu',
 
     "data_dir": "data/LEMON_DATA/",
     "channels": ['O1', 'O2', 'F1', 'F2', 'C1', 'C2', 'P1', 'P2'],
+    "downstream_task": "age",
     "segment_size": 512,
     "batch_size": 1024,
     "bandpass_filter": 0.5,
@@ -25,6 +26,9 @@ DEFAULT_PARAMS = Namespace(**{
     "n_segments": 2,
 
 })
+
+DEFAULT_PARAMS.features_file_path = DEFAULT_PARAMS.features_file_path.replace(
+    "<DOWNSTREAM_TASK>", DEFAULT_PARAMS.downstream_task.lower())
 
 def extract_and_save_features(params):
 
@@ -42,6 +46,7 @@ def extract_and_save_features(params):
     ds = LEMONDataset(
         data_dir=params.data_dir,
         channels=params.channels,
+        downstream_task=params.downstream_task,
         segment_size=params.segment_size,
         mode='all')
     x = ds.x.to(params.device)
