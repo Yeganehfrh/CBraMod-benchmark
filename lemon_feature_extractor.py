@@ -54,7 +54,8 @@ def extract_and_save_features(params):
 
     # store features
     torch.save({'features': features.detach().numpy(),
-                'gender': ds.y}, params.features_file_path)
+                'gender': ds.y,
+                'subject_ids': ds.subject_ids}, params.features_file_path)
     print("features saved to", params.features_file_path)
 
 

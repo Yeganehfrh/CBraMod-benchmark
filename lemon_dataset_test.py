@@ -1,7 +1,7 @@
 
 import numpy as np
 from sklearn.utils.class_weight import compute_class_weight
-from lemon_dataset import CustomDataset, LoadDataset
+from lemon_dataset import LEMONDataset, LoadDataset
 from argparse import Namespace
 
 
@@ -17,21 +17,24 @@ if __name__ == "__main__":
     }
     params = Namespace(**params)
 
-    ds = CustomDataset(
+    ds = LEMONDataset(
         data_dir=params.data_dir,
         channels=params.channels,
         segment_size=params.segment_size,
         mode='train',
     )
 
+    subject_ids = ds.subject_ids
     x = ds.x.numpy()
     y = ds.y
     class_weights = compute_class_weight('balanced', classes=np.unique(y), y=y)
     class_weights = {'0': class_weights[0], '1': class_weights[1]}
 
+    print("n_subjects=", len(subject_ids))
     print("x.shape=", x.shape, "y.shape", y.shape)
     print("class weights:", class_weights)
 
     # load via LoadDataset
     data_loaders = LoadDataset(params)
     data_loaders.get_data_loader()
+

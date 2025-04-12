@@ -63,6 +63,11 @@ class LEMONDataset(Dataset):
         # x.shape: bz, seq_len, ch_num
         # TODO expected: bz, ch_num, seq_len, patch_size
         patch_size = 200
+
+        self.subject_ids = torch.tensor(np.arange(0, self.n_subjects).repeat(x.shape[0] // self.n_subjects)[:, np.newaxis])
+        self.subject_ids = self.subject_ids.squeeze()
+        self.subject_ids = self.subject_ids.repeat(x.shape[0] // self.n_subjects)
+
         x = x.permute(0, 2, 1)
         x = x.unfold(2, patch_size, patch_size)
         self.x = x.float()
