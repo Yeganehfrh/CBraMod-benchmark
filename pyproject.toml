@@ -1,0 +1,22 @@
+[project]
+name = "CBraMod-benchmark"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "einops>=0.8.1",
+    "h5py>=3.13.0",
+    "lmdb>=1.6.2",
+    "matplotlib>=3.10.1",
+    "mne>=1.9.0",
+    "numpy>=2.2.4",
+    "pandas>=2.2.3",
+    "ptflops>=0.7.4",
+    "pyedflib>=0.1.40",
+    "scikit-learn>=1.6.1",
+    "scipy>=1.15.2",
+    "torchinfo>=1.8.0",
+    "tqdm>=4.67.1",
+    "umap-learn>=0.5.7",
+]

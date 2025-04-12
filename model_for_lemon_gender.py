@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
-from models.cbramod import CBraMod
+from CBraMod.models.cbramod import CBraMod
+from einops.layers.torch import Rearrange
 
 class Model(nn.Module):
     def __init__(self, param):
@@ -11,25 +12,23 @@ class Model(nn.Module):
             n_layer=12, nhead=8
         )
 
-        if param.use_pretrained_weights:
-            map_location = torch.device(f'cuda:{param.cuda}')
-            self.backbone.load_state_dict(torch.load(param.foundation_dir, map_location=map_location))
+        self.backbone.load_state_dict(
+            torch.load(param.foundation_dir, map_location=torch.device(param.device)))
         self.backbone.proj_out = nn.Identity()
 
         self.classifier = nn.Sequential(
-            nn.Linear(32 * 10 * 200, 10 * 200),
+            Rearrange('b c s p -> b (c s p)'),
+            nn.Linear(22*4*200, 4*200),
             nn.ELU(),
-            nn.Dropout(param.dropout),
-            nn.Linear(10 * 200, 200),
+            nn.Dropout(0.1),
+            nn.Linear(4 * 200, 200),
             nn.ELU(),
-            nn.Dropout(param.dropout),
-            nn.Linear(200, param.num_of_classes)
+            nn.Dropout(0.1),
+            nn.Linear(200, param.num_of_classes),
         )
 
     def forward(self, x):
-        # x = x / 100
         bz, ch_num, seq_len, patch_size = x.shape
         feats = self.backbone(x)
-        out = feats.contiguous().view(bz, ch_num*seq_len*200)
-        out = self.classifier(out)
+        out = self.classifier(feats.contiguous())
         return out
