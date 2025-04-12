@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "einops>=0.8.1",
+    "h5netcdf>=1.6.1",
     "h5py>=3.13.0",
     "lmdb>=1.6.2",
     "matplotlib>=3.10.1",
@@ -19,4 +20,5 @@ dependencies = [
     "torchinfo>=1.8.0",
     "tqdm>=4.67.1",
     "umap-learn>=0.5.7",
+    "xarray>=2025.3.1",
 ]
