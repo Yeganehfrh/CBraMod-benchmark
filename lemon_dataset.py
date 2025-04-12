@@ -59,7 +59,14 @@ class CustomDataset(Dataset):
             x = sosfiltfilt(sos, x, axis=-1)
 
         # segment signals
-        self.x = torch.tensor(x.copy()).unfold(2, segment_size, segment_size).permute(0, 2, 3, 1).flatten(0, 1)  # TODO: copy was added to x because of an error, look into this
+        x = torch.tensor(x.copy()).unfold(2, segment_size, segment_size).permute(0, 2, 3, 1).flatten(0, 1)  # TODO: copy was added to x because of an error, look into this
+
+        # x.shape: bz, seq_len, ch_num
+        # TODO expected: bz, ch_num, seq_len, patch_size
+        patch_size = 200
+        x = x.permute(0, 2, 1)
+        x = x.unfold(2, patch_size, patch_size)
+        self.x = x.float()
 
         self.y = self.eeg.beh_score.values
         self.y = self.y.repeat(self.x.shape[0] / self.n_subjects)

@@ -18,7 +18,7 @@ def main():
     model = ModelForLemonGender(params).to(params.device)
 
     # bz, ch_num, seq_len, patch_size = x.shape
-    x = torch.randn((8, 22, 4, 200)).to(params.device)
+    x = torch.randn((32, 8, 17, 200)).to(params.device)
     out = model(x)
     print(out.shape)
 

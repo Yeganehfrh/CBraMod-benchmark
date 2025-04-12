@@ -6,6 +6,32 @@ from timeit import default_timer as timer
 import numpy as np
 import copy
 import os
+from sklearn.metrics import balanced_accuracy_score, confusion_matrix, roc_auc_score, \
+    precision_recall_curve, auc
+
+
+
+def get_metrics_for_binaryclass(model, data_loader, device="mps"):
+    model.eval()
+
+    truths = []
+    preds = []
+    scores = []
+    for x, y in tqdm(data_loader, mininterval=1):
+        x = x.to(device)
+        y = y.to(device)
+        pred = model(x)
+        score_y = torch.sigmoid(pred)
+        pred_y = torch.gt(score_y, 0.5).long()
+        truths += y.long().cpu().squeeze().numpy().tolist()
+        preds += pred_y.cpu().squeeze().numpy().tolist()
+        scores += score_y.cpu().numpy().tolist()
+
+    truths = np.array(truths)
+    preds = np.array(preds)
+    scores = np.array(scores)
+    acc = balanced_accuracy_score(truths, preds)
+    return acc
 
 
 class Trainer(object):
@@ -87,32 +113,16 @@ class Trainer(object):
             optim_state = self.optimizer.state_dict()
 
             with torch.no_grad():
-                acc, pr_auc, roc_auc, cm = self.val_eval.get_metrics_for_binaryclass(self.model)
+                acc = get_metrics_for_binaryclass(self.model, self.data_loader['val'], self.device)
                 print(
-                    "Epoch {} : Training Loss: {:.5f}, acc: {:.5f}, pr_auc: {:.5f}, roc_auc: {:.5f}, LR: {:.5f}, Time elapsed {:.2f} mins".format(
+                    "Epoch {} : Training Loss: {:.5f}, acc: {:.5f}, LR: {:.5f}, Time elapsed {:.2f} mins".format(
                         epoch + 1,
                         np.mean(losses),
                         acc,
-                        pr_auc,
-                        roc_auc,
                         optim_state['param_groups'][0]['lr'],
                         (timer() - start_time) / 60
                     )
                 )
-                print(cm)
-                if roc_auc > roc_auc_best:
-                    print("kappa increasing....saving weights !! ")
-                    print("Val Evaluation: acc: {:.5f}, pr_auc: {:.5f}, roc_auc: {:.5f}".format(
-                        acc,
-                        pr_auc,
-                        roc_auc,
-                    ))
-                    best_f1_epoch = epoch + 1
-                    acc_best = acc
-                    pr_auc_best = pr_auc
-                    roc_auc_best = roc_auc
-                    cm_best = cm
-                    self.best_model_states = copy.deepcopy(self.model.state_dict())
         self.model.load_state_dict(self.best_model_states)
         with torch.no_grad():
             print("***************************Test************************")

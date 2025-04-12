@@ -1,14 +1,14 @@
 import sys
 
-from mne import epochs
-from pandas.core.indexes import multi
-from scipy import optimize
 sys.path.append("./CBraMod")  # HACK to make imports in submodules work
 
+from mne import data
+import torch
 from lemon_trainer import Trainer
 from argparse import Namespace
-from lemon_dataset import CustomDataset, LoadDataset
+from lemon_dataset import LoadDataset
 from lemon_model import Model as ModelForLemonGender
+from lemon_trainer import get_metrics_for_binaryclass
 
 params = Namespace(
     data_dir = "data/LEMON_DATA/",
@@ -16,6 +16,8 @@ params = Namespace(
     segment_size = 512,
     batch_size = 32,
     bandpass_filter = 0.5,
+    n_channels = 8,
+    n_segments = 2,
     device = 'mps',
 
     # model
@@ -30,6 +32,7 @@ params = Namespace(
     lr = 5e-4,
     weight_decay = 5e-2,
     epochs = 10,
+    clip_value = 1,
 
 )
 

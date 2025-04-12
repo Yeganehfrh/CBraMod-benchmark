@@ -18,7 +18,7 @@ class Model(nn.Module):
 
         self.classifier = nn.Sequential(
             Rearrange('b c s p -> b (c s p)'),
-            nn.Linear(22*4*200, 4*200),
+            nn.Linear(param.n_channels*param.n_segments*200, 4*200),
             nn.ELU(),
             nn.Dropout(0.1),
             nn.Linear(4 * 200, 200),
