@@ -2,13 +2,12 @@ import torch
 from torch.utils.data import Dataset, DataLoader
 import numpy as np
 import os
-import pickle
 import xarray as xr
 import pandas as pd
 from scipy.signal import butter, sosfiltfilt
 
 
-class CustomDataset(Dataset):
+class LEMONDataset(Dataset):
     def __init__(
             self,
             data_dir,
@@ -17,7 +16,7 @@ class CustomDataset(Dataset):
             segment_size: int = 512,
             mode='train',
     ):
-        super(CustomDataset, self).__init__()
+        super(LEMONDataset, self).__init__()
         self.mode = mode
         self.channels = channels
         
@@ -109,9 +108,9 @@ class LoadDataset(object):
         self.segment_size = params.segment_size
 
     def get_data_loader(self):
-        train_set = CustomDataset(self.data_dir, mode='train')
-        val_set = CustomDataset(self.data_dir, mode='val')
-        test_set = CustomDataset(self.data_dir, mode='test')
+        train_set = LEMONDataset(self.data_dir, mode='train')
+        val_set = LEMONDataset(self.data_dir, mode='val')
+        test_set = LEMONDataset(self.data_dir, mode='test')
         print("train,val,test: ", len(train_set), len(val_set), len(test_set))
         print("total: ", len(train_set)+len(val_set)+len(test_set))
         data_loader = {

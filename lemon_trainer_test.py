@@ -16,7 +16,7 @@ params = Namespace(
     bandpass_filter = 0.5,
     n_channels = 8,
     n_segments = 2,
-    device = 'cpu',
+    device = 'mps',
 
     # model
     foundation_dir = "pretrained_weights/pretrained_weights.pth",
