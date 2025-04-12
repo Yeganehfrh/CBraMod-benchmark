@@ -66,7 +66,6 @@ class LEMONDataset(Dataset):
 
         self.subject_ids = torch.tensor(np.arange(0, self.n_subjects).repeat(x.shape[0] // self.n_subjects)[:, np.newaxis])
         self.subject_ids = self.subject_ids.squeeze()
-        self.subject_ids = self.subject_ids.repeat(x.shape[0] // self.n_subjects)
 
         x = x.permute(0, 2, 1)
         x = x.unfold(2, patch_size, patch_size)
@@ -83,12 +82,15 @@ class LEMONDataset(Dataset):
         if self.mode == 'train':
             self.x = self.x[:int(len(self.x) * 0.8)]
             self.y = self.y[:int(len(self.y) * 0.8)]
+            self.subject_ids = self.subject_ids[:int(len(self.subject_ids) * 0.8)]
         elif self.mode == 'val':
             self.x = self.x[int(len(self.x) * 0.8):int(len(self.x) * 0.9)]
             self.y = self.y[int(len(self.y) * 0.8):int(len(self.y) * 0.9)]
+            self.subject_ids = self.subject_ids[int(len(self.subject_ids) * 0.8):int(len(self.subject_ids) * 0.9)]
         elif self.mode == 'test':
             self.x = self.x[int(len(self.x) * 0.9):int(len(self.x) * 1.)]
             self.y = self.y[int(len(self.y) * 0.9):int(len(self.y) * 1.)]
+            self.subject_ids = self.subject_ids[int(len(self.subject_ids) * 0.9):int(len(self.subject_ids) * 1.)]
 
     def __len__(self):
         return len((self.y))

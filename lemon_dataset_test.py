@@ -30,8 +30,7 @@ if __name__ == "__main__":
     class_weights = compute_class_weight('balanced', classes=np.unique(y), y=y)
     class_weights = {'0': class_weights[0], '1': class_weights[1]}
 
-    print("n_subjects=", len(subject_ids))
-    print("x.shape=", x.shape, "y.shape", y.shape)
+    print("x.shape=", x.shape, "y.shape", y.shape, "subject_ids.shape", subject_ids.shape)
     print("class weights:", class_weights)
 
     # load via LoadDataset

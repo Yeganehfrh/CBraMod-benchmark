@@ -69,4 +69,5 @@ if __name__ == "__main__":
     feat_ds = torch.load(DEFAULT_PARAMS.features_file_path, weights_only=False)
     print("[TEST] features.shape =", feat_ds['features'].shape)
     print("[TEST] gender.shape =", feat_ds['gender'].shape)
+    print("[TEST] subject_ids.shape =", len(feat_ds['subject_ids']))
     print("[TEST] Done.")
