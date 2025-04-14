@@ -33,7 +33,7 @@ class LEMONDataset(Dataset):
         beh_score = None
         if downstream_task.lower() == 'upps':
             # NOTE behavioral score    
-            beh_score = pd.read_csv('data/LEMON_DATA/UPPS.csv', index_col="ID")
+            beh_score = pd.read_csv('data/LEMON/UPPS.csv', index_col="ID")
             beh_score_name = 'UPPS_sens_seek'
             beh_score[beh_score_name] = (
                 beh_score[beh_score_name].apply(lambda x: 1 if x > 30 else 0))
@@ -64,6 +64,7 @@ class LEMONDataset(Dataset):
 
         # select channels
         x = self.eeg.sel(channel=channels).to_numpy()
+        print("XXXX.shape: ", x.shape)
         if bandpass_filter is not None:
             sos = butter(4, bandpass_filter, btype='high', fs=128, output='sos')  # TODO: fs
             x = sosfiltfilt(sos, x, axis=-1)
@@ -102,6 +103,7 @@ class LEMONDataset(Dataset):
             self.x = self.x[int(len(self.x) * 0.9):int(len(self.x) * 1.)]
             self.y = self.y[int(len(self.y) * 0.9):int(len(self.y) * 1.)]
             self.subject_ids = self.subject_ids[int(len(self.subject_ids) * 0.9):int(len(self.subject_ids) * 1.)]
+
 
     def __len__(self):
         return len((self.y))

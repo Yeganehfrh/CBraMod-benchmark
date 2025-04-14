@@ -5,11 +5,12 @@ sys.path.append("./CBraMod")  # HACK to make imports in submodules work
 import torch
 from src.lemon_trainer import Trainer
 from argparse import Namespace
-from src.lemon_dataset import LoadDataset
-from src.lemon_model import Model as ModelForLemonGender
+from src.gender_model import GenderModel
+# from src.lemon_dataset import LoadDataset
+from src.otka_dataset import LoadDataset
 
 params = Namespace(
-    data_dir = "data/LEMON_DATA/",
+    data_dir = "data/OTKA/",
     channels = ['O1', 'O2', 'F1', 'F2', 'C1', 'C2', 'P1', 'P2'],
     segment_size = 512,
     batch_size = 1024,
@@ -35,6 +36,6 @@ params = Namespace(
 )
 
 data_loaders = LoadDataset(params).get_data_loader()
-model = ModelForLemonGender(params).to(params.device)
+model = GenderModel(params).to(params.device)
 trainer = Trainer(params, data_loaders, model)
 trainer.train_for_binaryclass()

@@ -1,6 +1,6 @@
 import sys
 
-from lemon_dataset import LEMONDataset
+from src.otka_dataset import OTKADataset
 sys.path.append("./CBraMod")  # HACK to make imports in submodules work
 
 import torch
@@ -11,16 +11,15 @@ from argparse import Namespace
 
 DEFAULT_PARAMS = Namespace(**{
     "foundation_dir": "pretrained_weights/pretrained_weights.pth",
-    "features_file_path": "data/LEMON/CBraMod_features_<DOWNSTREAM_TASK>.pt",
+    "features_file_path": "data/OTKA/CBraMod_features_<DOWNSTREAM_TASK>.pt",
     "num_of_classes": 2,
     "device": 'cpu',
 
-    "data_dir": "data/LEMON/",
+    "data_dir": "data/OTKA/",
     "channels": ['O1', 'O2', 'F1', 'F2', 'C1', 'C2', 'P1', 'P2'],
     "downstream_task": "age",
     "segment_size": 512,
     "batch_size": 1024,
-    "bandpass_filter": 0.5,
     "n_channels": 8,
     "n_segments": 2,
 
@@ -42,7 +41,7 @@ def extract_and_save_features(params):
                    map_location=torch.device(params.device)))
     backbone.proj_out = nn.Identity()
 
-    ds = LEMONDataset(
+    ds = OTKADataset(
         data_dir=params.data_dir,
         channels=params.channels,
         downstream_task=params.downstream_task,

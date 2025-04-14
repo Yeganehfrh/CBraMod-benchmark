@@ -3,9 +3,9 @@ import torch.nn as nn
 from CBraMod.models.cbramod import CBraMod
 from einops.layers.torch import Rearrange
 
-class Model(nn.Module):
+class GenderModel(nn.Module):
     def __init__(self, param):
-        super(Model, self).__init__()
+        super(GenderModel, self).__init__()
         self.backbone = CBraMod(
             in_dim=200, out_dim=200, d_model=200,
             dim_feedforward=800, seq_len=30,

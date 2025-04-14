@@ -2,7 +2,7 @@ import sys
 sys.path.append("./CBraMod")  # HACK to make imports in submodules work
 
 import torch
-from src.lemon_model import Model as ModelForLemonGender
+from src.gender_model import GenderModel as ModelForLemonGender
 from argparse import Namespace
 
 def main():
@@ -11,6 +11,8 @@ def main():
     params = {
         "foundation_dir": "pretrained_weights/pretrained_weights.pth",
         "num_of_classes": 2,
+        "n_channels": 8,
+        "n_segments": 17,
         "device": 'mps'
     }
 
