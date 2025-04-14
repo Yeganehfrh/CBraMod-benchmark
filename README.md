@@ -3,9 +3,7 @@
 
 ```bash
 uv venv
+uv sync
 
-# to import dependencies from CBraMod
-uv pip install -r CBraMod/requirements.txt
-
-uv run python -m main
+uv run python -m ...
 ```
