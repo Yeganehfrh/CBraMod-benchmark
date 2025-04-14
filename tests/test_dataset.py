@@ -1,7 +1,7 @@
 
 import numpy as np
 from sklearn.utils.class_weight import compute_class_weight
-from lemon_dataset import LEMONDataset, LoadDataset
+from src.lemon_dataset import LEMONDataset, LoadDataset
 from argparse import Namespace
 
 

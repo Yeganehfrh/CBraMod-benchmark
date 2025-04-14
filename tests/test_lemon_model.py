@@ -2,7 +2,7 @@ import sys
 sys.path.append("./CBraMod")  # HACK to make imports in submodules work
 
 import torch
-from lemon_model import Model as ModelForLemonGender
+from src.lemon_model import Model as ModelForLemonGender
 from argparse import Namespace
 
 def main():

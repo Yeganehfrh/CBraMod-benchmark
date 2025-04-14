@@ -3,10 +3,10 @@ import sys
 sys.path.append("./CBraMod")  # HACK to make imports in submodules work
 
 import torch
-from lemon_trainer import Trainer
+from src.lemon_trainer import Trainer
 from argparse import Namespace
-from lemon_dataset import LoadDataset
-from lemon_model import Model as ModelForLemonGender
+from src.lemon_dataset import LoadDataset
+from src.lemon_model import Model as ModelForLemonGender
 
 params = Namespace(
     data_dir = "data/LEMON_DATA/",

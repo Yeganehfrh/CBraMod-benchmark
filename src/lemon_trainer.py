@@ -5,9 +5,7 @@ from torch.nn import CrossEntropyLoss
 from timeit import default_timer as timer
 import numpy as np
 import copy
-import os
-from sklearn.metrics import balanced_accuracy_score, confusion_matrix, roc_auc_score, \
-    precision_recall_curve, auc
+from sklearn.metrics import balanced_accuracy_score
 
 
 
