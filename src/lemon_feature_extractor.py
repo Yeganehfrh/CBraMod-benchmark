@@ -16,18 +16,20 @@ DEFAULT_PARAMS = Namespace(**{
     "device": 'cpu',
 
     "data_dir": "data/LEMON/",
-    "channels": ['O1', 'O2', 'F1', 'F2', 'C1', 'C2', 'P1', 'P2'],
-    "downstream_task": "age",
-    "segment_size": 512,
+    "channels": ['Fp1', 'Fp2', 'F7', 'F3', 'Fz', 'F4', 'F8', 'T7', 'C3',
+                 'Cz', 'C4', 'T8', 'P7', 'P3', 'Pz', 'P4', 'P8', 'O1', 'O2'],
+    "downstream_task": "gender",
+    "segment_size": 30,  # TODO
     "batch_size": 1024,
-    "bandpass_filter": 0.5,
-    "n_channels": 8,
-    "n_segments": 2,
+    "bandpass_filter": 0.3,
+    "n_channels": 19,
+    "n_segments": 2,  # TODO ?
 
 })
 
 DEFAULT_PARAMS.features_file_path = DEFAULT_PARAMS.features_file_path.replace(
     "<DOWNSTREAM_TASK>", DEFAULT_PARAMS.downstream_task.lower())
+
 
 def extract_and_save_features(params):
 
@@ -64,7 +66,6 @@ def extract_and_save_features(params):
 
 
 if __name__ == "__main__":
-
 
     extract_and_save_features(DEFAULT_PARAMS)
 
