@@ -39,7 +39,7 @@ def test_otka_dataset():
     data_loaders.get_data_loader()
 
 
-def text_lemon_dataset():
+def test_lemon_dataset():
 
     params = {
         "data_dir": "data/LEMON/",
